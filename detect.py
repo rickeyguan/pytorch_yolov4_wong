@@ -65,6 +65,7 @@ def detect(save_img=False):
         view_img = True
         cudnn.benchmark = True  # set True to speed up constant image size inference
         dataset = LoadStreams(source, img_size=imgsz)
+        save_img = True
     else:
         save_img = True
         dataset = LoadImages(source, img_size=imgsz, auto_size=64)
@@ -138,7 +139,7 @@ def detect(save_img=False):
 
             # Save results (image with detections)
             if save_img:
-                if dataset.mode == 'images':
+                if dataset.mode != 'images':
                     cv2.imwrite(save_path, im0)
                 else:
                     if vid_path != save_path:  # new video
@@ -147,10 +148,13 @@ def detect(save_img=False):
                             vid_writer.release()  # release previous video writer
 
                         fourcc = 'mp4v'  # output video codec
-                        fps = vid_cap.get(cv2.CAP_PROP_FPS)
-                        w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                        h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                        vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*fourcc), fps, (w, h))
+                        # fps = vid_cap.get(cv2.CAP_PROP_FPS)
+                        fps = 1
+                        # w = int(vid_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                        w = 1280
+                        # h = int(vid_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                        h = 720
+                        vid_writer = cv2.VideoWriter('cpu.mp4', cv2.VideoWriter_fourcc(*fourcc), fps, (w, h))
                     vid_writer.write(im0)
 
     if save_txt or save_img:
